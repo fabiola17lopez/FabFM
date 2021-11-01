@@ -1,4 +1,4 @@
-package com.example.fabfm
+package com.fabfm
 
 import android.os.Bundle
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -7,7 +7,8 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import com.example.fabfm.databinding.ActivityMainBinding
+import com.fabfm.R
+import com.fabfm.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 

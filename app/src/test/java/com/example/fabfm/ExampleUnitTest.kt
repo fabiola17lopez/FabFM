@@ -1,4 +1,4 @@
-package com.example.fabfm
+package com.fabfm
 
 import org.junit.Test
 
