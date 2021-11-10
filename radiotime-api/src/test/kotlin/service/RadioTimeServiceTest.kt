@@ -14,7 +14,7 @@ class RadioTimeServiceTest {
     private fun service(
         apiBlock: FakeRadioTimeApi.() -> Unit = { /* no-op default */ }
     ): RadioTimeService {
-        return RadioTimeService(
+        return RadioTimeServiceImpl(
             FakeRadioTimeApi(apiBlock),
             RadioTimeTransformer()
         )

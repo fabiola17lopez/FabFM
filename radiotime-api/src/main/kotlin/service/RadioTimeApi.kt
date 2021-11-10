@@ -9,4 +9,10 @@ interface RadioTimeApi {
 
     @GET("/")
     fun getHierarchy(@Query("render") render: String?): Single<RadioTimeResponse>
+
+    @GET("/Browse.ashx")
+    fun getLink(
+        @Query("render") render: String?,
+        @Query("id") id: String? = "c1390807",
+    ): Single<RadioTimeResponse>
 }

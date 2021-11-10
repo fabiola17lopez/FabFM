@@ -1,41 +1,76 @@
 package com.fabfm.ui.home
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.fabfm.ui.home.model.BrowseState
+import com.fabfm.ui.home.model.BrowseElement
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.BehaviorSubject
+import model.RadioTimeElement
+import model.RadioTimeState
 import model.RadioTimeTransformer
 import service.RadioTimeService
 import service.getRadioTimeApi
-import java.util.*
 
-class HomeViewModel() : ViewModel() {
-
-    private val radioTimeService = RadioTimeService(getRadioTimeApi(), RadioTimeTransformer())
+class HomeViewModel(private val radioTimeService: RadioTimeService) : ViewModel() {
     private val disposables = CompositeDisposable()
 
-    private val textSubject = BehaviorSubject.create<String>()
-    fun text(): Observable<String> = textSubject.hide()
+    private val stateSubject = BehaviorSubject.create<BrowseState>()
+    fun state(): Observable<BrowseState> = stateSubject.hide()
 
     init {
-        textSubject.onNext("This is home fragment")
+        stateSubject.onNext(BrowseState.Loading)
     }
 
     fun loadData() {
         disposables.add(
             radioTimeService.getBaseHierarchy()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ hierarchy ->
-                    textSubject.onNext(hierarchy.toString())
+                .subscribe({ response ->
+                    when (response) {
+                        is RadioTimeState.Success -> {
+                            val elements = response.elements
+                            stateSubject.onNext(
+                                if (elements != null && elements.isNotEmpty()) {
+                                    BrowseState.Success(
+                                        elements = buildContent(elements),
+                                        title = response.title,
+                                    )
+                                } else {
+                                    BrowseState.Empty
+                                }
+                            )
+                        }
+                        is RadioTimeState.Error -> {
+                            stateSubject.onNext(BrowseState.Error)
+                        }
+                    }
                 }, { error ->
                     Log.e(LOAD_DATA_ERROR_TAG, error.localizedMessage ?: error.toString())
                     throw(error)
                 })
         )
+    }
+
+    private fun buildContent(response: List<RadioTimeElement>): List<BrowseElement> {
+        val content = mutableListOf<BrowseElement>()
+        for (item in response) {
+            when (item) {
+                is RadioTimeElement.Section -> {
+                    content.add(BrowseElement.SectionHeader(item.text))
+                    content.addAll(buildContent(item.elements))
+                }
+                is RadioTimeElement.Audio -> {
+                    content.add(BrowseElement.fromRadioTimeAudio(item))
+                }
+                is RadioTimeElement.Link -> {
+                    content.add(BrowseElement.fromRadioTimeLink(item))
+                }
+            }
+        }
+        return content
     }
 
     override fun onCleared() {

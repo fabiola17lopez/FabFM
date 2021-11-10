@@ -4,6 +4,7 @@ sealed class RadioTimeElement {
     data class Link(
         val url: String,
         val text: String? = null,
+        val subtext: String? = null,
         val image: String? = null,
     ): RadioTimeElement()
 

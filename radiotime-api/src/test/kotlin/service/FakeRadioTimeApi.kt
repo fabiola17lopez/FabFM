@@ -17,6 +17,10 @@ class FakeRadioTimeApi(
             ?: throw NotImplementedError()
     }
 
+    override fun getLink(render: String?, id: String?): Single<RadioTimeResponse> {
+        throw NotImplementedError()
+    }
+
     fun responseSuccess() {
         response = RadioTimeResponse(
             head = RadioTimeHeadResponse(title = "Local Radio"),

@@ -5,13 +5,10 @@ private const val TYPE_AUDIO = "audio"
 class RadioTimeTransformer {
 
     fun transform(response: RadioTimeResponse): RadioTimeState {
-        return response.body?.let { elementList ->
-            RadioTimeState.Success(
-                elements = elementList.mapNotNull { transform(it) },
-                title = response.head?.title
-            )
-        }
-            ?: RadioTimeState.Empty
+        return RadioTimeState.Success(
+            elements = response.body?.mapNotNull { transform(it) },
+            title = response.head?.title
+        )
     }
 
     private fun transform(response: RadioTimeElementResponse): RadioTimeElement? {
@@ -20,6 +17,7 @@ class RadioTimeTransformer {
                 RadioTimeElement.Link(
                     url = url,
                     text = response.text,
+                    subtext = response.subtext,
                     image = response.image,
                 )
             }
