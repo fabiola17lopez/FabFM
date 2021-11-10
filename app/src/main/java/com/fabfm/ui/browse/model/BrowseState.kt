@@ -1,4 +1,4 @@
-package com.fabfm.ui.home.model
+package com.fabfm.ui.browse.model
 
 sealed class BrowseState {
     data class Success(

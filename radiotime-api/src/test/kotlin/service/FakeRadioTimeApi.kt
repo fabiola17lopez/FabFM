@@ -4,6 +4,8 @@ import io.reactivex.Single
 import model.RadioTimeElementResponse
 import model.RadioTimeHeadResponse
 import model.RadioTimeResponse
+import retrofit2.http.Query
+import retrofit2.http.Url
 
 class FakeRadioTimeApi(
     block: FakeRadioTimeApi.() -> Unit = { /* no-op default */ }
@@ -12,13 +14,12 @@ class FakeRadioTimeApi(
 
     init { block() }
 
-    override fun getHierarchy(render: String?): Single<RadioTimeResponse> {
+    override fun getLink(
+        @Url url: String,
+        @Query(value = "render") render: String?
+    ): Single<RadioTimeResponse> {
         return response?.let { Single.just(it) }
             ?: throw NotImplementedError()
-    }
-
-    override fun getLink(render: String?, id: String?): Single<RadioTimeResponse> {
-        throw NotImplementedError()
     }
 
     fun responseSuccess() {

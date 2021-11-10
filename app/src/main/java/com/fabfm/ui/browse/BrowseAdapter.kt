@@ -1,14 +1,15 @@
-package com.fabfm.ui.home
+package com.fabfm.ui.browse
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.fabfm.databinding.ViewElementBinding
 import com.fabfm.databinding.ViewSectionHeaderBinding
-import com.fabfm.ui.home.model.BrowseElement
+import com.fabfm.ui.browse.model.BrowseElement
 
 class BrowseAdapter(
-    private var data: List<BrowseElement>
+    private var data: List<BrowseElement>,
+    private val listener: (BrowseElement) -> Unit,
     ): RecyclerView.Adapter<BrowseViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BrowseViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -31,7 +32,7 @@ class BrowseAdapter(
     override fun onBindViewHolder(holder: BrowseViewHolder, position: Int) {
         when (holder) {
             is BrowseViewHolder.Section -> holder.bind(data[position] as BrowseElement.SectionHeader)
-            is BrowseViewHolder.Link -> holder.bind(data[position] as BrowseElement.Link)
+            is BrowseViewHolder.Link -> holder.bind(data[position] as BrowseElement.Link, listener)
             is BrowseViewHolder.Audio -> holder.bind(data[position] as BrowseElement.Audio)
         }
     }

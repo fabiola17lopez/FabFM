@@ -1,4 +1,4 @@
-package com.fabfm.ui.home
+package com.fabfm.ui.browse
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,18 +11,33 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.fabfm.MainActivity
 import com.fabfm.R
-import com.fabfm.databinding.FragmentHomeBinding
-import com.fabfm.ui.home.model.BrowseState
+import com.fabfm.databinding.FragmentBrowseBinding
+import com.fabfm.ui.browse.model.BrowseElement
+import com.fabfm.ui.browse.model.BrowseState
 import io.reactivex.disposables.CompositeDisposable
 import model.RadioTimeTransformer
 import service.RadioTimeServiceImpl
 import service.getRadioTimeApi
 
-class HomeFragment : Fragment() {
+private const val ARG_FETCH_DATA_URL = "FetchDataUrl"
+class BrowseFragment : Fragment() {
 
-    private lateinit var homeViewModel: HomeViewModel
-    private var _binding: FragmentHomeBinding? = null
+    companion object {
+        fun newInstance(url: String): BrowseFragment =
+            BrowseFragment().apply {
+                arguments = Bundle().apply {
+                    putString(ARG_FETCH_DATA_URL, url)
+                }
+            }
+
+        val TAG = "HOME_FRAGMENT"
+    }
+
+    private lateinit var browseViewModel: BrowseViewModel
+    private var _binding: FragmentBrowseBinding? = null
     private lateinit var browseAdapter: BrowseAdapter
+
+    private var baseUrl: String? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -30,16 +45,20 @@ class HomeFragment : Fragment() {
 
     private val compositeDisposable = CompositeDisposable()
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        baseUrl = arguments?.getString(ARG_FETCH_DATA_URL)
+    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         val radioTimeService = RadioTimeServiceImpl(getRadioTimeApi(), RadioTimeTransformer())
-        homeViewModel = ViewModelProvider(this, HomeViewModelFactory(radioTimeService))
-            .get(HomeViewModel::class.java)
+        browseViewModel = ViewModelProvider(this, BrowseViewModelFactory(radioTimeService))
+            .get(BrowseViewModel::class.java)
 
-        _binding = FragmentHomeBinding.inflate(inflater, container, false)
+        _binding = FragmentBrowseBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
         setUpAdapter()
@@ -47,7 +66,13 @@ class HomeFragment : Fragment() {
     }
 
     private fun setUpAdapter() {
-        browseAdapter = BrowseAdapter(emptyList())
+        browseAdapter = BrowseAdapter(emptyList()) {
+            when (it) {
+                is BrowseElement.Audio -> navigateToFragment(it.url)
+                is BrowseElement.Link -> navigateToFragment(it.url)
+            }
+
+        }
         binding.elementList.apply {
             adapter = browseAdapter
             layoutManager = LinearLayoutManager(context)
@@ -58,7 +83,7 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         compositeDisposable.add(
-            homeViewModel.state()
+            browseViewModel.state()
                 .subscribe { state ->
                     when (state) {
                         is BrowseState.Success -> renderSuccess(state)
@@ -69,7 +94,17 @@ class HomeFragment : Fragment() {
                 }
         )
 
-        homeViewModel.loadData()
+        browseViewModel.loadData(baseUrl!!)
+    }
+
+    private fun navigateToFragment(url: String) {
+        if (isAdded) {
+            val fragment = newInstance(url)
+            parentFragmentManager.beginTransaction()
+                .addToBackStack(null)
+                .replace(R.id.fragment_main, fragment, TAG)
+                .commit()
+        }
     }
 
     private fun renderSuccess(state: BrowseState.Success) {
@@ -89,7 +124,7 @@ class HomeFragment : Fragment() {
             .setMessage(R.string.error_message)
             .setPositiveButton(R.string.try_again) { _, _ ->
                 showLoadingSpinner()
-                homeViewModel.loadData()
+                browseViewModel.loadData(baseUrl!!)
             }
             .show()
         renderEmptyState()

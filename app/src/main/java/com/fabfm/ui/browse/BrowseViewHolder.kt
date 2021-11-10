@@ -1,17 +1,14 @@
-package com.fabfm.ui.home
+package com.fabfm.ui.browse
 
-import android.content.res.Resources
 import android.view.View
 import android.widget.ImageView
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.fabfm.R
 import com.fabfm.databinding.ViewElementBinding
 import com.fabfm.databinding.ViewSectionHeaderBinding
-import com.fabfm.ui.home.model.BrowseElement
+import com.fabfm.ui.browse.model.BrowseElement
 
 private const val ROUNDED_CORNER_RADIUS = 8
 sealed class BrowseViewHolder(val view: View): RecyclerView.ViewHolder(view) {
@@ -23,14 +20,16 @@ sealed class BrowseViewHolder(val view: View): RecyclerView.ViewHolder(view) {
     }
 
     data class Link(val binding: ViewElementBinding): BrowseViewHolder(binding.root) {
-        fun bind(element: BrowseElement.Link) {
+        fun bind(element: BrowseElement.Link, listener: (BrowseElement) -> Unit) {
             binding.apply {
-                root.setCardBackgroundColor(ContextCompat.getColor(root.context, R.color.lighter_gray))
                 text.text = element.text
                 subtext.isVisible = element.subtext != null
                 element.subtext?.let { subtext.text = it }
                 element.image?.let { loadImage(image, it) }
                 image.isVisible = element.image != null
+
+                root.cardElevation = 0f
+                root.setOnClickListener { listener(element) }
             }
         }
     }
@@ -39,7 +38,7 @@ sealed class BrowseViewHolder(val view: View): RecyclerView.ViewHolder(view) {
 
         fun bind(element: BrowseElement.Audio) {
             binding.apply {
-                root.setCardBackgroundColor(ContextCompat.getColor(root.context, R.color.light_gray))
+                root.cardElevation = 20f
                 text.text = element.text
                 subtext.isVisible = element.subtext != null
                 element.subtext?.let { subtext.text = it }

@@ -11,8 +11,8 @@ class RadioTimeServiceImpl(
     private val radioTimeApi: RadioTimeApi,
     private val radioTimeTransformer: RadioTimeTransformer,
 ): RadioTimeService {
-    override fun getBaseHierarchy() : Single<RadioTimeState> {
-        return radioTimeApi.getLink(render = RENDER_JSON)
+    override fun getRadioTimeData(url: String) : Single<RadioTimeState> {
+        return radioTimeApi.getLink(url = url, render = RENDER_JSON)
             .subscribeOn(Schedulers.io())
             .map { radioTimeTransformer.transform(it) }
             .onErrorReturn { RadioTimeState.Error }

@@ -23,7 +23,7 @@ class RadioTimeServiceTest {
     @Test
     fun `can handle api success`() {
         service { responseSuccess() }
-            .getBaseHierarchy()
+            .getRadioTimeData("http://opml.radiotime.com/")
             .test()
             .assertNoErrors()
             .assertValue(
@@ -51,7 +51,7 @@ class RadioTimeServiceTest {
     // in the tests it never actually hits the onError block.
     @Test(expected = NotImplementedError::class)
     fun `can handle api failure`() {
-        service().getBaseHierarchy()
+        service().getRadioTimeData("http://opml.radiotime.com/")
             .test()
             .assertError(NotImplementedError::class.java)
             .assertValue(

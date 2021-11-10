@@ -12,7 +12,7 @@ class FakeRadioTimeService(
 
     init { block() }
 
-    override fun getBaseHierarchy(): Single<RadioTimeState> {
+    override fun getRadioTimeData(url: String): Single<RadioTimeState> {
         return response?.let { Single.just(it) }
             ?: throw NotImplementedError()
     }

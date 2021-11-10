@@ -1,20 +1,18 @@
-package com.fabfm.ui.home
+package com.fabfm.ui.browse
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.fabfm.ui.home.model.BrowseState
-import com.fabfm.ui.home.model.BrowseElement
+import com.fabfm.ui.browse.model.BrowseState
+import com.fabfm.ui.browse.model.BrowseElement
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.BehaviorSubject
 import model.RadioTimeElement
 import model.RadioTimeState
-import model.RadioTimeTransformer
 import service.RadioTimeService
-import service.getRadioTimeApi
 
-class HomeViewModel(private val radioTimeService: RadioTimeService) : ViewModel() {
+class BrowseViewModel(private val radioTimeService: RadioTimeService) : ViewModel() {
     private val disposables = CompositeDisposable()
 
     private val stateSubject = BehaviorSubject.create<BrowseState>()
@@ -24,9 +22,9 @@ class HomeViewModel(private val radioTimeService: RadioTimeService) : ViewModel(
         stateSubject.onNext(BrowseState.Loading)
     }
 
-    fun loadData() {
+    fun loadData(url: String) {
         disposables.add(
-            radioTimeService.getBaseHierarchy()
+            radioTimeService.getRadioTimeData(url)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ response ->
                     when (response) {
@@ -78,7 +76,7 @@ class HomeViewModel(private val radioTimeService: RadioTimeService) : ViewModel(
     }
 
     companion object {
-        const val ERROR_TAG = "HOME"
+        const val ERROR_TAG = "BROWSE"
         private const val LOAD_DATA_ERROR_TAG = "$ERROR_TAG.LOAD_DATA"
     }
 }

@@ -1,8 +1,5 @@
 <resources>
     <string name="app_name">FabFM</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
     <string name="error_title">Uh oh!</string>
     <string name="error_message">Something went wrong fetching RadioTime data.</string>
     <string name="try_again">Try Again</string>

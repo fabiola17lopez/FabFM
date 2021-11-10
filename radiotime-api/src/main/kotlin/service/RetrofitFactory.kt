@@ -6,7 +6,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
-private const val RADIOTIME_API_BASE_URL = "https://opml.radiotime.com"
+private const val RADIOTIME_API_BASE_URL = "http://opml.radiotime.com"
 
 fun getRadioTimeApi(): RadioTimeApi {
     val logging = HttpLoggingInterceptor()

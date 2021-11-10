@@ -1,4 +1,4 @@
-package com.fabfm.ui.home.model
+package com.fabfm.ui.browse.model
 
 import model.RadioTimeElement
 

@@ -7,5 +7,5 @@ import model.RadioTimeState
 import model.RadioTimeTransformer
 
 interface RadioTimeService {
-    fun getBaseHierarchy() : Single<RadioTimeState>
+    fun getRadioTimeData(url: String) : Single<RadioTimeState>
 }

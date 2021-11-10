@@ -1,20 +1,20 @@
 package com.example.fabfm
 
-import com.fabfm.ui.home.HomeViewModel
-import com.fabfm.ui.home.model.BrowseElement
-import com.fabfm.ui.home.model.BrowseState
+import com.fabfm.ui.browse.BrowseViewModel
+import com.fabfm.ui.browse.model.BrowseElement
+import com.fabfm.ui.browse.model.BrowseState
 import org.junit.Rule
 import org.junit.Test
 
-class HomeViewModelTest {
+class BrowseViewModelTest {
 
     @get:Rule
     val rule = TrampolineSchedulerRule()
 
     fun buildViewModel(
         apiBlock: FakeRadioTimeService.() -> Unit = { /* no-op default */ }
-    ): HomeViewModel {
-        return HomeViewModel(FakeRadioTimeService(apiBlock))
+    ): BrowseViewModel {
+        return BrowseViewModel(FakeRadioTimeService(apiBlock))
     }
 
     @Test
@@ -39,7 +39,7 @@ class HomeViewModelTest {
         val viewModel = buildViewModel { responseSuccess() }
         viewModel.state()
             .test()
-            .apply { viewModel.loadData() }
+            .apply { viewModel.loadData("http://my.website.com") }
             .assertValueCount(2)
             .assertValueAt(0, BrowseState.Loading)
             .assertValueAt(1, BrowseState.Success(expectedContent, "Local Radio"))
@@ -50,7 +50,7 @@ class HomeViewModelTest {
         val viewModel = buildViewModel { responseError() }
         viewModel.state()
             .test()
-            .apply { viewModel.loadData() }
+            .apply { viewModel.loadData("http://my.website.com") }
             .assertValueCount(2)
             .assertValueAt(0, BrowseState.Loading)
             .assertValueAt(1, BrowseState.Error)
@@ -61,7 +61,7 @@ class HomeViewModelTest {
         val viewModel = buildViewModel { responseEmpty() }
         viewModel.state()
             .test()
-            .apply { viewModel.loadData() }
+            .apply { viewModel.loadData("http://my.website.com") }
             .assertValueCount(2)
             .assertValueAt(0, BrowseState.Loading)
             .assertValueAt(1, BrowseState.Empty)
