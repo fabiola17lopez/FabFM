@@ -33,7 +33,7 @@ class BrowseAdapter(
         when (holder) {
             is BrowseViewHolder.Section -> holder.bind(data[position] as BrowseElement.SectionHeader)
             is BrowseViewHolder.Link -> holder.bind(data[position] as BrowseElement.Link, listener)
-            is BrowseViewHolder.Audio -> holder.bind(data[position] as BrowseElement.Audio)
+            is BrowseViewHolder.Audio -> holder.bind(data[position] as BrowseElement.Audio, listener)
         }
     }
 

@@ -14,6 +14,7 @@ import com.fabfm.R
 import com.fabfm.databinding.FragmentBrowseBinding
 import com.fabfm.ui.browse.model.BrowseElement
 import com.fabfm.ui.browse.model.BrowseState
+import com.fabfm.ui.play.PlayerBottomSheetFragment
 import io.reactivex.disposables.CompositeDisposable
 import model.RadioTimeTransformer
 import service.RadioTimeServiceImpl
@@ -54,6 +55,8 @@ class BrowseFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        // I would normally likely set up dependency injection rather than
+        // initializing these values here
         val radioTimeService = RadioTimeServiceImpl(getRadioTimeApi(), RadioTimeTransformer())
         browseViewModel = ViewModelProvider(this, BrowseViewModelFactory(radioTimeService))
             .get(BrowseViewModel::class.java)
@@ -68,8 +71,8 @@ class BrowseFragment : Fragment() {
     private fun setUpAdapter() {
         browseAdapter = BrowseAdapter(emptyList()) {
             when (it) {
-                is BrowseElement.Audio -> navigateToFragment(it.url)
-                is BrowseElement.Link -> navigateToFragment(it.url)
+                is BrowseElement.Audio -> navigateToPlayerFragment(it.url)
+                is BrowseElement.Link -> navigateToBrowseFragment(it.url)
             }
 
         }
@@ -97,7 +100,7 @@ class BrowseFragment : Fragment() {
         browseViewModel.loadData(baseUrl!!)
     }
 
-    private fun navigateToFragment(url: String) {
+    private fun navigateToBrowseFragment(url: String) {
         if (isAdded) {
             val fragment = newInstance(url)
             parentFragmentManager.beginTransaction()
@@ -105,6 +108,11 @@ class BrowseFragment : Fragment() {
                 .replace(R.id.fragment_main, fragment, TAG)
                 .commit()
         }
+    }
+
+    private fun navigateToPlayerFragment(url: String) {
+        PlayerBottomSheetFragment.newInstance(url)
+            .show(parentFragmentManager, TAG)
     }
 
     private fun renderSuccess(state: BrowseState.Success) {

@@ -36,14 +36,16 @@ sealed class BrowseViewHolder(val view: View): RecyclerView.ViewHolder(view) {
 
     data class Audio(val binding: ViewElementBinding): BrowseViewHolder(binding.root) {
 
-        fun bind(element: BrowseElement.Audio) {
+        fun bind(element: BrowseElement.Audio, listener: (BrowseElement) -> Unit) {
             binding.apply {
-                root.cardElevation = 20f
                 text.text = element.text
                 subtext.isVisible = element.subtext != null
                 element.subtext?.let { subtext.text = it }
                 element.image?.let { loadImage(image, it) }
                 image.isVisible = element.image != null
+
+                root.cardElevation = 20f
+                root.setOnClickListener { listener(element) }
             }
         }
     }
