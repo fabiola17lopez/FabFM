@@ -15,4 +15,4 @@ Lastly, I spent a little time attempting to play audio files using ExoPlayer, bu
 
 | Browse | Play |
 | --- | --- |
-| <img src="assets/browse.png"> | <img src="assets/play.png"> |
+| <img src="assets/Browse.png"> | <img src="assets/play.png"> |
